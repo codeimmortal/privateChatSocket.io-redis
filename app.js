@@ -1,7 +1,7 @@
 var express = require('express');
 
 var app = express();
-app.set('port', process.env.PORT || 9000);
+app.set('port', process.env.PORT || 9002);
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var port = app.get('port');
@@ -15,9 +15,10 @@ server.listen(port, function () {
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
-});
+})
 var sub = redis.createClient();
 var pub = redis.createClient();
+var connectioncreated = false;
 var usernames = {};
 var rooms = [];
 var Sockets = {};
@@ -36,13 +37,14 @@ sub.subscribe("sendchat");
 
         var username = jData.username;
         var room = jData.room;
-        if (rooms.indexOf(room) != -1) {
+        if (rooms.indexOf(room) != -1 && Sockets[jData.room]) {
+
             Sockets[room].username = username;
             Sockets[room].room = room;
             usernames[username] = username;
             Sockets[room].socket.join(room);
             }
-        } else if(channel == 'sendchat'){
+        } else if(channel == 'sendchat' && Sockets[jData.room]){
             console.log(jData);
             console.log(Sockets[jData.room])
       //      console.log(Sockets);
