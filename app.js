@@ -10,7 +10,7 @@ var redis = require('redis');
 app.use(express.static('public'));
 
 server.listen(port, function () {
-    //console.log("Server listening on: http://localhost:%s", port);
+    console.log("Server listening on: http://localhost:%s", port);
 });
 
 app.get('/', function (req, res) {
